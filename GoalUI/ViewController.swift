@@ -13,10 +13,24 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-           targetUI(5)
-        // drawBox(314, 50, 291)
+/*      Путем вычислений нашел центр экрана и решил оцентроваться на расстоянии по 50 от краев,
+         то есть размер size первого кубика будет 314 =  414 - 2*50. Отсюда и начальные координаты х=50, у=291
+         для его прорисовки.
+         Далее динамически вычисляем сдвиг shift (расстояние между квадратами\кругами) к центру в зависимости от количества квадратиков(кругов)
+         расстояние до центра составляет 157, поэтому shift = 157 / count.
+         Эти значения забиты в функции рисовать квадратную цель targetUiSquare (использует drawBox) и
+         рисовать круглую цель targetUIRound (использует drawCircle).
+         Выходит, что мы рисуем каждый следующий квадрат (круг) увиличивая координаты на shift,  размер кубика уменьшаем на 2*shift. Так же уменьшаем расстояние к центру на shift пока оно >0.
+         Для того, чтобы сделать из квадрата круг подобрал для самого первого значение 157 ( о черт, совпало
+         с расстоянием до центра 0_о),  и далее при каждой следующей итерации уменьшаем его тоже на shift
+*/
+         //targetUiSquare(7)
+            targetUIRound(7)
+        
+   
+        
     }
-    
+    // рисует квадрат с тремя аргументами - размер и две коордианты
     func drawBox(_ size:Int, _ x:Int, _ y:Int) {
         //var x = 80
         //let y = 500
@@ -33,11 +47,29 @@ class ViewController: UIViewController {
         view.addSubview(box)
     }
     
-    func targetUI(_ count: Int) {
+    // рисует круг из квадрата с четырьмя аргументами - размер, две коордианты и радиус скругливания
+    func drawCircle(_ size:Int, _ x:Int, _ y:Int, _ cornerRaduis:CGFloat) {
+        //var x = 80
+        //let y = 500
+        let cube = CGRect.init(x: x, y: y, width: size, height: size)
+        let box = UIView(frame: cube)
+        box.backgroundColor = UIColor(red: CGFloat(arc4random_uniform(256))/255,
+                                      green: CGFloat(arc4random_uniform(256))/255,
+                                      blue: CGFloat(arc4random_uniform(256))/255,
+                                      alpha: 1)
+        view.backgroundColor = UIColor(red: CGFloat(arc4random_uniform(256))/255,
+                                       green: CGFloat(arc4random_uniform(256))/255,
+                                       blue: CGFloat(arc4random_uniform(256))/255,
+                                       alpha: 1)
+        box.layer.cornerRadius = cornerRaduis
+        view.addSubview(box)
+    }
+    
+    
+    func targetUiSquare(_ count: Int) {
         var size = 314
         var x = 50
         var y = 291
-        //let n = Double(count)
         let shift = 157 / count
         var movingToCenter = 157
         while movingToCenter > 0 {
@@ -49,6 +81,23 @@ class ViewController: UIViewController {
         }
     }
     
+    func targetUIRound(_ count: Int) {
+        var size = 314
+        var x = 50
+        var y = 291
+        var cornerRadius: CGFloat = 157
+        //let n = Double(count)
+        let shift = 157 / count
+        var movingToCenter = 157
+        while movingToCenter > 0 {
+            drawCircle(size, x, y,cornerRadius)
+            size-=2*shift
+            x+=shift
+            y+=shift
+            movingToCenter-=shift
+            cornerRadius-=CGFloat(shift)
+        }
+    }
     
     
 }
