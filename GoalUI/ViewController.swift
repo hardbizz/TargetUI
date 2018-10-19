@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        targetUI(5)
+           targetUI(5)
         // drawBox(314, 50, 291)
     }
     
